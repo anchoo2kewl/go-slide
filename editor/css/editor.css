@@ -249,15 +249,27 @@
   padding: 0;
   overflow: hidden;
 }
-/* Make TipTap's ProseMirror editor instance look like a real slide */
+/* Make TipTap's ProseMirror editor instance look like a real slide.
+ * Padding mirrors .aal-wrap / .slide-wrap so authors see the same layout
+ * as production. Bare h1/h2/p baselines mirror the legacy-compat block
+ * in theme CSS — when authors load an old deck (no .aal-h1/.aal-lede
+ * classes), TipTap's default rendering still looks like a slide. */
 .gs-tiptap .ProseMirror {
   min-height: 100%;
   outline: none;
   font-family: Inter, "Segoe UI", Arial, sans-serif;
   color: #F0F4F8;
+  padding: 5% 6%;
+  box-sizing: border-box;
 }
 .gs-tiptap .ProseMirror p,
 .gs-tiptap .ProseMirror li { color: #CFD8DC; }
+.gs-tiptap .ProseMirror h1:not([class]) { font-size: 4rem; font-weight: 800; line-height: 1.05; margin: 0 0 .4rem 0; }
+.gs-tiptap .ProseMirror h2:not([class]) { font-size: 2.4rem; font-weight: 700; line-height: 1.15; margin: 0 0 .4rem 0; }
+.gs-tiptap .ProseMirror h3:not([class]) { font-size: 1.8rem; font-weight: 600; line-height: 1.2;  margin: 0 0 .3rem 0; }
+.gs-tiptap .ProseMirror p:not([class])  { font-size: 1.4rem; line-height: 1.4; margin: .4rem 0; }
+.gs-tiptap .ProseMirror ul:not([class]),
+.gs-tiptap .ProseMirror ol:not([class]) { font-size: 1.3rem; line-height: 1.5; margin: .4rem 0 .4rem 1.4rem; }
 
 /* Dark mode chrome */
 @media (prefers-color-scheme: dark) {

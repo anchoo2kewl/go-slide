@@ -331,7 +331,12 @@ export class GoSlideEditor {
     if (!cur) return;
     const extensions = [
       StarterKit.configure({
-        heading: false, // we use AalH1/AalH2 instead
+        // Keep StarterKit's heading enabled so legacy decks authored as
+        // bare <h1>/<h2> still parse as headings. AalH1's parseHTML rule
+        // ('h1.aal-h1') is more specific than StarterKit's bare 'h1', so
+        // explicitly classed AAL content still binds to AalH1 and round-
+        // trips correctly. Plain headings render through the heading
+        // node and pick up the .gs-tiptap baseline CSS.
         horizontalRule: false, // we use AalRule
       }),
       TextAlign.configure({ types: ['paragraph'] }),

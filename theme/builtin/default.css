@@ -112,3 +112,29 @@
 }
 
 .slide-mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+/* === Legacy compatibility ===
+ * See aal.css for the rationale — same fallback for the default (light)
+ * theme: pad sections that lack a .slide-wrap layout container, and give
+ * bare HTML elements sensible baseline sizing instead of inheriting
+ * reveal.js's huge presentation defaults.
+ */
+.reveal .slides section.slide:not(:has(.slide-wrap)),
+.reveal .slides section.slide-dark:not(:has(.slide-wrap)) {
+  padding: 5% 6%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.reveal .slides section.slide h1:not([class]),
+.reveal .slides section.slide-dark h1:not([class]) { font-size: 3.6rem; font-weight: 800; line-height: 1.05; margin: 0 0 .4rem 0; }
+.reveal .slides section.slide h2:not([class]),
+.reveal .slides section.slide-dark h2:not([class]) { font-size: 2.2rem; font-weight: 700; line-height: 1.15; margin: 0 0 .4rem 0; }
+.reveal .slides section.slide h3:not([class]),
+.reveal .slides section.slide-dark h3:not([class]) { font-size: 1.6rem; font-weight: 600; line-height: 1.2;  margin: 0 0 .3rem 0; }
+.reveal .slides section.slide p:not([class]),
+.reveal .slides section.slide-dark p:not([class])  { font-size: 1.3rem; line-height: 1.4; margin: .4rem 0; }
+.reveal .slides section.slide ul:not([class]),
+.reveal .slides section.slide-dark ul:not([class]),
+.reveal .slides section.slide ol:not([class]),
+.reveal .slides section.slide-dark ol:not([class]) { font-size: 1.2rem; line-height: 1.5; margin: .4rem 0 .4rem 1.4rem; }

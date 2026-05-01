@@ -174,3 +174,38 @@
 .aal-table { width: 100%; border-collapse: collapse; font-size: 1rem; }
 .aal-table th { padding: .8rem .6rem; color: #0A1628; text-align: left; border-bottom: 2px solid #0A1628; }
 .aal-table td { padding: .7rem .6rem; color: #37474F; border-bottom: 1px solid #CFD8DC; }
+
+/* === Legacy compatibility ===
+ * Older decks were authored with bare <h1>/<h2>/<p> inside <section> with
+ * no .aal-wrap layout container, so they had no padding and relied on
+ * reveal.js's huge default font sizes — producing the overflow you see
+ * on legacy slides. Two safety nets below:
+ *
+ *   1. Auto-pad sections that don't ship an .aal-wrap descendant. :has()
+ *      is supported in every browser shipped after April 2024, which
+ *      covers the audience.
+ *   2. Sensible font-size baselines for bare h1/h2/h3/p/ul on aal sections.
+ *      Authors who explicitly use .aal-h1/.aal-h2/.aal-lede still win via
+ *      class specificity (the explicit rules above are the same selector
+ *      depth so authoring order matters — keep these AFTER the explicit
+ *      rules).
+ */
+.reveal .slides section.aal:not(:has(.aal-wrap)),
+.reveal .slides section.aal-light:not(:has(.aal-wrap)) {
+  padding: 5% 6%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.reveal .slides section.aal h1:not([class]),
+.reveal .slides section.aal-light h1:not([class]) { font-size: 4rem; font-weight: 800; line-height: 1.05; margin: 0 0 .4rem 0; }
+.reveal .slides section.aal h2:not([class]),
+.reveal .slides section.aal-light h2:not([class]) { font-size: 2.4rem; font-weight: 700; line-height: 1.15; margin: 0 0 .4rem 0; }
+.reveal .slides section.aal h3:not([class]),
+.reveal .slides section.aal-light h3:not([class]) { font-size: 1.8rem; font-weight: 600; line-height: 1.2;  margin: 0 0 .3rem 0; }
+.reveal .slides section.aal p:not([class]),
+.reveal .slides section.aal-light p:not([class]) { font-size: 1.4rem; line-height: 1.4; margin: .4rem 0; }
+.reveal .slides section.aal ul:not([class]),
+.reveal .slides section.aal-light ul:not([class]),
+.reveal .slides section.aal ol:not([class]),
+.reveal .slides section.aal-light ol:not([class]) { font-size: 1.3rem; line-height: 1.5; margin: .4rem 0 .4rem 1.4rem; }
