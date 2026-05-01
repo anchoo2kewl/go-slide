@@ -148,10 +148,12 @@ export class GoSlideEditor {
             <button class="gs-tb-btn gs-save" id="gs-save">Save</button>
           </div>
           <div class="gs-canvas-wrap" id="gs-canvas-wrap">
-            <div class="gs-canvas" id="gs-canvas">
-              <div class="gs-tiptap" id="gs-tiptap"></div>
-              <textarea class="gs-code" id="gs-code" spellcheck="false"></textarea>
-              <iframe class="gs-preview" id="gs-preview" sandbox="allow-scripts allow-same-origin"></iframe>
+            <div class="gs-canvas-fit" id="gs-canvas-fit">
+              <div class="gs-canvas" id="gs-canvas">
+                <div class="gs-tiptap" id="gs-tiptap"></div>
+                <textarea class="gs-code" id="gs-code" spellcheck="false"></textarea>
+                <iframe class="gs-preview" id="gs-preview"></iframe>
+              </div>
             </div>
           </div>
         </main>
@@ -164,6 +166,8 @@ export class GoSlideEditor {
       code: root.querySelector('#gs-code'),
       preview: root.querySelector('#gs-preview'),
       canvas: root.querySelector('#gs-canvas'),
+      canvasFit: root.querySelector('#gs-canvas-fit'),
+      canvasWrap: root.querySelector('#gs-canvas-wrap'),
       'mode-wysiwyg': root.querySelector('#mode-wysiwyg'),
       'mode-code': root.querySelector('#mode-code'),
       'mode-preview': root.querySelector('#mode-preview'),
@@ -172,6 +176,21 @@ export class GoSlideEditor {
     };
     this.dom.code.style.display = 'none';
     this.dom.preview.style.display = 'none';
+
+    // Scale the 1280×800 canvas to fit whatever width the editor area
+    // exposes. Re-runs on every layout change so resizing the window or
+    // toggling sidebars stays pixel-correct.
+    this._scale = () => {
+      const fit = this.dom.canvasFit;
+      if (!fit) return;
+      const w = fit.clientWidth;
+      const scale = w > 0 ? w / 1280 : 1;
+      fit.style.setProperty('--gs-scale', String(scale));
+    };
+    this._scaleObserver = new ResizeObserver(this._scale);
+    this._scaleObserver.observe(this.dom.canvasWrap);
+    window.addEventListener('resize', this._scale);
+    queueMicrotask(this._scale);
 
     // Mode buttons
     for (const id of ['mode-wysiwyg','mode-code','mode-preview']) {

@@ -3,6 +3,12 @@
  * Defines the editor shell (sidebar, toolbar, canvas) ONLY. The slide
  * content styling lives in theme/builtin/*.css and is loaded by the
  * canvas iframe-equivalent so what you see is what you get.
+ *
+ * Canvas pattern: the slide content is laid out at its production size
+ * (1280×800) and a CSS transform scales it down to fit whatever width
+ * the editor area exposes. This way TipTap, the preview iframe, and
+ * the production page all render the SAME pixel layout — the editor
+ * just shows it shrunk to fit the screen.
  */
 
 .gs-editor {
@@ -71,6 +77,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0; /* allow flex children to shrink below content width */
 }
 
 /* Toolbar */
@@ -122,10 +129,13 @@
 }
 .gs-mode-btn.active { background: #6366f1; color: #ffffff; }
 
-/* Canvas — the heart of WYSIWYG.
- * We render the slide content at its production size (1280×800) inside
- * a scaled wrapper so authors see the exact pixel layout that ships.
- * A box-shadow + dark backdrop signals "this is the slide canvas".
+/* === Canvas — scale-to-fit ===
+ * The wrap container fills the available editor area and centers the
+ * slide. The "fit" element maintains the slide's 1280:800 aspect ratio
+ * at whatever width the wrap allows. Inside it, .gs-canvas is fixed at
+ * 1280×800 and gets a CSS transform applied by JS to scale it down to
+ * the fit container's width — so the canvas always looks pixel-correct
+ * to the production layout, just shrunk.
  */
 .gs-canvas-wrap {
   flex: 1;
@@ -134,17 +144,29 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 32px;
+  padding: 24px;
+  box-sizing: border-box;
+  min-width: 0;
+}
+.gs-canvas-fit {
+  width: 100%;
+  max-width: 1280px;
+  aspect-ratio: 1280 / 800;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #0A1628; /* shows through under the section's data-bg */
 }
 .gs-canvas {
   width: 1280px;
   height: 800px;
-  flex-shrink: 0;
-  position: relative;
-  background: #0A1628; /* AAL default; theme CSS overrides per .reveal section */
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-  border-radius: 4px;
-  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  /* --gs-scale set by JS on resize */
+  transform: scale(var(--gs-scale, 1));
 }
 .gs-tiptap, .gs-code, .gs-preview {
   position: absolute;
@@ -166,12 +188,6 @@
   box-sizing: border-box;
 }
 .gs-tiptap {
-  /* The TipTap editor renders the slide content directly inside this
-   * box. Theme CSS targeting `.reveal .slides section.aal` etc. won't
-   * match because we don't wrap in <div class="reveal"><div class="slides"><section>...
-   * — so we provide a scoped fallback here that mirrors the section
-   * styling for the canvas only.
-   */
   padding: 0;
   overflow: hidden;
 }
@@ -184,11 +200,6 @@
 }
 .gs-tiptap .ProseMirror p,
 .gs-tiptap .ProseMirror li { color: #CFD8DC; }
-
-/* Scale-to-fit helper: when the viewport is narrower than 1280px, the
- * canvas wrapper scrolls. For a more polished UX a host can apply a
- * CSS transform to .gs-canvas to scale; we leave that to the host so
- * we don't fight their toolbar layout. */
 
 /* Dark mode chrome */
 @media (prefers-color-scheme: dark) {
