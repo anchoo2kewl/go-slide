@@ -1,6 +1,204 @@
-/* go-slide editor chrome — placeholder.
+/* go-slide editor chrome.
  *
- * Day-2 work: toolbar, sidebar, slide-thumbnail, mode-toggle, panel CSS.
- * The slide CONTENT styling lives in theme/builtin/*.css, loaded by both
- * the editor canvas and the production page.
+ * Defines the editor shell (sidebar, toolbar, canvas) ONLY. The slide
+ * content styling lives in theme/builtin/*.css and is loaded by the
+ * canvas iframe-equivalent so what you see is what you get.
  */
+
+.gs-editor {
+  display: flex;
+  height: calc(100vh - 64px);
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+/* Sidebar */
+.gs-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.gs-sidebar-head {
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+}
+.gs-thumbs {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  flex: 1;
+}
+.gs-thumb {
+  position: relative;
+  margin-bottom: 6px;
+  padding: 8px 10px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f8fafc;
+}
+.gs-thumb.active { border-color: #6366f1; background: #ffffff; }
+.gs-thumb:hover { border-color: #c7d2fe; }
+.gs-thumb-num { position: absolute; top: 6px; right: 8px; font-size: 10px; color: #94a3b8; }
+.gs-thumb-preview { font-size: 11px; color: #475569; line-height: 1.3; max-height: 3em; overflow: hidden; }
+.gs-thumb-del { position: absolute; top: 4px; left: 6px; background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px; padding: 0; display: none; }
+.gs-thumb:hover .gs-thumb-del { display: block; }
+.gs-add-slide {
+  margin: 8px;
+  padding: 10px;
+  border: 1px dashed #c7d2fe;
+  background: #eef2ff;
+  color: #4338ca;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+}
+.gs-add-slide:hover { background: #e0e7ff; }
+
+/* Main area */
+.gs-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Toolbar */
+.gs-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+.gs-toolbar-spacer { flex: 1; }
+.gs-toolbar-group { display: flex; gap: 4px; flex-wrap: wrap; }
+.gs-tb-btn {
+  padding: 5px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.gs-tb-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+.gs-tb-btn.active { background: #e0e7ff; color: #4338ca; border-color: #a5b4fc; }
+.gs-save {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #6366f1;
+}
+.gs-save:hover { background: #4f46e5; border-color: #4f46e5; color: #ffffff; }
+
+/* Mode toggle */
+.gs-mode-toggle {
+  display: inline-flex;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.gs-mode-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.gs-mode-btn.active { background: #6366f1; color: #ffffff; }
+
+/* Canvas — the heart of WYSIWYG.
+ * We render the slide content at its production size (1280×800) inside
+ * a scaled wrapper so authors see the exact pixel layout that ships.
+ * A box-shadow + dark backdrop signals "this is the slide canvas".
+ */
+.gs-canvas-wrap {
+  flex: 1;
+  overflow: auto;
+  background: #1e293b;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px;
+}
+.gs-canvas {
+  width: 1280px;
+  height: 800px;
+  flex-shrink: 0;
+  position: relative;
+  background: #0A1628; /* AAL default; theme CSS overrides per .reveal section */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.gs-tiptap, .gs-code, .gs-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+.gs-code {
+  padding: 24px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #e2e8f0;
+  background: #0f172a;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+.gs-tiptap {
+  /* The TipTap editor renders the slide content directly inside this
+   * box. Theme CSS targeting `.reveal .slides section.aal` etc. won't
+   * match because we don't wrap in <div class="reveal"><div class="slides"><section>...
+   * — so we provide a scoped fallback here that mirrors the section
+   * styling for the canvas only.
+   */
+  padding: 0;
+  overflow: hidden;
+}
+/* Make TipTap's ProseMirror editor instance look like a real slide */
+.gs-tiptap .ProseMirror {
+  min-height: 100%;
+  outline: none;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: #F0F4F8;
+}
+.gs-tiptap .ProseMirror p,
+.gs-tiptap .ProseMirror li { color: #CFD8DC; }
+
+/* Scale-to-fit helper: when the viewport is narrower than 1280px, the
+ * canvas wrapper scrolls. For a more polished UX a host can apply a
+ * CSS transform to .gs-canvas to scale; we leave that to the host so
+ * we don't fight their toolbar layout. */
+
+/* Dark mode chrome */
+@media (prefers-color-scheme: dark) {
+  .gs-editor { background: #0f172a; color: #e2e8f0; }
+  .gs-sidebar { background: #1e293b; border-color: #334155; }
+  .gs-sidebar-head { color: #94a3b8; border-color: #334155; }
+  .gs-thumb { background: #0f172a; }
+  .gs-thumb.active { background: #1e293b; }
+  .gs-thumb-preview { color: #cbd5e1; }
+  .gs-toolbar { background: #1e293b; border-color: #334155; }
+  .gs-tb-btn { color: #cbd5e1; }
+  .gs-tb-btn:hover { background: #0f172a; border-color: #475569; }
+}

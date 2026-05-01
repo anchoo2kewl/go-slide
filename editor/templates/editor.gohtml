@@ -1,1 +1,54 @@
-{{define "editor.gohtml"}}<!-- go-slide editor — Day-2 placeholder. -->{{end}}
+{{define "editor.gohtml"}}
+<!-- go-slide editor — drop this fragment into any admin page.
+     The host is responsible for wrapping it in their site chrome and
+     supplying the <input type="hidden" name="content"> form field. -->
+
+<link rel="stylesheet" href="{{.AssetBase}}/css/editor.css">
+
+<!-- The slide CONTENT styling (theme CSS) is loaded so the WYSIWYG
+     canvas, the preview iframe, and the production page all look
+     identical. The theme is selectable per slide; the loader below
+     reloads CSS on theme change. -->
+{{range .Theme.Fonts}}<link rel="stylesheet" href="{{.}}">
+{{end}}
+<style id="gs-theme-css">
+  /* Inline so it loads synchronously with the editor shell. */
+  {{.ThemeCSS}}
+</style>
+
+<div id="go-slide-editor"></div>
+
+<!-- ESM-only TipTap via import map. No build step required on the host. -->
+<script type="importmap">
+{
+  "imports": {
+    "@tiptap/core":                "https://esm.sh/@tiptap/core@2.10.3",
+    "@tiptap/starter-kit":         "https://esm.sh/@tiptap/starter-kit@2.10.3",
+    "@tiptap/extension-text-align":"https://esm.sh/@tiptap/extension-text-align@2.10.3",
+    "@tiptap/extension-underline": "https://esm.sh/@tiptap/extension-underline@2.10.3"
+  }
+}
+</script>
+<script type="module">
+  import { GoSlideEditor } from '{{.AssetBase}}/js/editor.mjs';
+
+  const initial = {{.InitialContentJS}};
+  const editor = new GoSlideEditor({
+    mountSelector:    '#go-slide-editor',
+    initialContent:   initial,
+    themeID:          {{.ThemeIDJS}},
+    previewEndpoint:  {{.PreviewEndpointJS}},
+    assetBase:        {{.AssetBaseJS}},
+    autosaveEndpoint: {{.AutosaveEndpointJS}},
+    onSave: async (html) => {
+      const target = document.getElementById({{.OutputFieldIDJS}});
+      if (target) target.value = html;
+      const form = document.getElementById({{.FormIDJS}});
+      if (form) form.submit();
+    },
+  });
+  window.__goSlideEditor = editor;
+</script>
+
+<input type="hidden" id="{{.OutputFieldID}}" name="{{.OutputFieldName}}" value="">
+{{end}}

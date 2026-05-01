@@ -28,8 +28,10 @@ package goslide
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 
+	"github.com/anchoo2kewl/go-slide/editor"
 	"github.com/anchoo2kewl/go-slide/handler"
 	"github.com/anchoo2kewl/go-slide/render"
 	"github.com/anchoo2kewl/go-slide/theme"
@@ -100,4 +102,59 @@ func (e *Engine) PreviewHandler() http.Handler {
 // Mount it at e.BasePath() + "/assets/".
 func (e *Engine) AssetHandler() http.Handler {
 	return handler.AssetHandler()
+}
+
+// ThemesHandler exposes the theme registry over HTTP for an admin UI.
+//
+// The host application is responsible for putting an auth middleware in
+// front of this handler. Pass an onChange callback to persist user-created
+// themes to a database; otherwise themes live only for the process's
+// lifetime.
+//
+// Routes (relative to wherever you mount it):
+//
+//	GET    /            list themes
+//	GET    /{id}        get one theme
+//	POST   /            create a new theme (JSON body: id, name, css, ...)
+//	PUT    /{id}        update an existing user theme
+//	DELETE /{id}        delete a user theme
+//
+// Built-in themes (Default, AAL) are read-only.
+func (e *Engine) ThemesHandler(onChange func(action string, t theme.Theme)) http.Handler {
+	return &handler.ThemesHandler{Registry: e.themes, OnChange: onChange}
+}
+
+// EditorRequest configures one editor instance for an admin page.
+type EditorRequest struct {
+	// InitialContent is the existing slide HTML loaded on mount.
+	InitialContent string
+	// ThemeID picks which theme drives the canvas. Falls back to the
+	// registry default when unknown.
+	ThemeID string
+	// AutosaveEndpoint is the POST URL the editor calls to autosave
+	// (optional). The host is responsible for auth/persistence.
+	AutosaveEndpoint string
+	// OutputFieldID, OutputFieldName, FormID let the host wire the
+	// editor into its existing <form>. Defaults: "go-slide-content",
+	// "content", "slide-form".
+	OutputFieldID   string
+	OutputFieldName string
+	FormID          string
+}
+
+// RenderEditor returns the HTML fragment that mounts the go-slide editor
+// in an admin page. The host must serve the editor's assets under
+// e.BasePath() + "/assets/" (use AssetHandler).
+func (e *Engine) RenderEditor(req EditorRequest) (template.HTML, error) {
+	th, _ := e.themes.Get(req.ThemeID)
+	return editor.Render(editor.Config{
+		AssetBase:        e.basePath + "/assets",
+		PreviewEndpoint:  e.basePath + "/preview",
+		AutosaveEndpoint: req.AutosaveEndpoint,
+		Theme:            th,
+		InitialContent:   req.InitialContent,
+		OutputFieldID:    req.OutputFieldID,
+		OutputFieldName:  req.OutputFieldName,
+		FormID:           req.FormID,
+	})
 }
