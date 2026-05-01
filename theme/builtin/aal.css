@@ -1,0 +1,176 @@
+/* AI Agent Lens theme — dark navy + teal accent system.
+ *
+ * Loaded by:
+ *   1. the rendered presentation page (production output)
+ *   2. the editor's WYSIWYG canvas (so authors see exactly what ships)
+ *   3. the editor's preview iframe (byte-identical)
+ *
+ * All visual primitives are addressed by class. TipTap node extensions
+ * round-trip these classes losslessly so WYSIWYG and Code mode produce
+ * the same HTML. Inline styles are reserved for one-off overrides only;
+ * if you need a new pattern, add a class here and a node in the schema.
+ */
+
+.reveal .slides section.aal,
+.reveal .slides section.aal-light {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+.reveal .slides section.aal { background: var(--slide-bg, #0A1628); }
+.reveal .slides section.aal-light { background: var(--slide-bg-light, #F0F4F8); }
+
+.reveal .slides section.aal h1,
+.reveal .slides section.aal h2,
+.reveal .slides section.aal h3 {
+  color: var(--slide-text, #F0F4F8);
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-transform: none;
+}
+.reveal .slides section.aal-light h1,
+.reveal .slides section.aal-light h2,
+.reveal .slides section.aal-light h3 {
+  color: var(--slide-bg, #0A1628);
+  margin: 0;
+  text-transform: none;
+}
+.reveal .slides section.aal p,
+.reveal .slides section.aal li { color: var(--slide-text-soft, #CFD8DC); }
+.reveal .slides section.aal-light p,
+.reveal .slides section.aal-light li { color: #37474F; }
+
+.reveal .slides section.aal a,
+.reveal .slides section.aal-light a { color: var(--slide-accent, #1DB89E); }
+
+.reveal .slides section.aal ul,
+.reveal .slides section.aal-light ul { margin: .4rem 0 0 1.1rem; padding: 0; }
+.reveal .slides section.aal li,
+.reveal .slides section.aal-light li { margin: .2rem 0; }
+
+/* Layout primitives */
+.aal-wrap {
+  padding: 5% 6%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.aal-wrap-top { justify-content: flex-start; }
+
+.aal-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--slide-accent, #1DB89E), var(--slide-accent-2, #0E8C7D));
+}
+
+/* Eyebrows + rules */
+.aal-eyebrow {
+  color: var(--slide-accent, #1DB89E);
+  font-size: 14px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.aal-eyebrow-light {
+  color: var(--slide-accent-2, #0E8C7D);
+  font-size: 14px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.aal-rule {
+  width: 80px;
+  height: 4px;
+  background: var(--slide-rule, #1DB89E);
+  border: 0;
+  margin: 1.2rem 0 1.6rem 0;
+}
+
+/* Headings & lede */
+.aal-h1 { font-size: 5.4rem; font-weight: 800; line-height: 1.0; }
+.aal-h2 { font-size: 3rem; font-weight: 700; line-height: 1.1; }
+.aal-lede { font-size: 1.7rem; color: #ECEFF1; font-weight: 300; max-width: 90%; line-height: 1.35; }
+.aal-lede-light { font-size: 1.5rem; color: #37474F; font-weight: 300; max-width: 90%; line-height: 1.4; }
+
+/* Pills */
+.aal-pill {
+  display: inline-block;
+  border: 1.5px solid var(--slide-accent, #1DB89E);
+  color: var(--slide-accent, #1DB89E);
+  border-radius: 999px;
+  padding: .4rem 1rem;
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  margin-right: .6rem;
+}
+
+/* Cards */
+.aal-card {
+  background: var(--slide-card-bg, rgba(255,255,255,0.04));
+  border: 1px solid var(--slide-card-bd, rgba(29,184,158,0.28));
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+}
+.aal-card-light {
+  background: #FFFFFF;
+  border: 1px solid #E0E7EE;
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(10,22,40,.06);
+}
+
+/* Stats */
+.aal-stat { font-size: 3rem; font-weight: 800; color: var(--slide-accent, #1DB89E); line-height: 1; }
+.aal-stat-light { font-size: 3rem; font-weight: 800; color: var(--slide-accent-2, #0E8C7D); line-height: 1; }
+.aal-stat-label {
+  color: var(--slide-text-mute, #90A4AE);
+  font-size: .78rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: .6rem;
+  line-height: 1.35;
+}
+
+/* Grids */
+.aal-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.4rem; }
+.aal-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.2rem; }
+.aal-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 1rem; }
+
+/* Quote */
+.aal-quote {
+  border-left: 4px solid var(--slide-accent, #1DB89E);
+  padding-left: 1.2rem;
+  color: #ECEFF1;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Footer row */
+.aal-foot {
+  position: absolute;
+  bottom: 24px;
+  left: 6%;
+  right: 6%;
+  display: flex;
+  justify-content: space-between;
+  color: #546E7A;
+  font-size: .7rem;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+.aal-foot-light { color: #90A4AE; }
+
+/* Mono */
+.aal-mono { font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+/* Tables */
+.aal-table { width: 100%; border-collapse: collapse; font-size: 1rem; }
+.aal-table th { padding: .8rem .6rem; color: #0A1628; text-align: left; border-bottom: 2px solid #0A1628; }
+.aal-table td { padding: .7rem .6rem; color: #37474F; border-bottom: 1px solid #CFD8DC; }

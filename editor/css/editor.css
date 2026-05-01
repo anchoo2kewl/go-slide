@@ -1,0 +1,6 @@
+/* go-slide editor chrome — placeholder.
+ *
+ * Day-2 work: toolbar, sidebar, slide-thumbnail, mode-toggle, panel CSS.
+ * The slide CONTENT styling lives in theme/builtin/*.css, loaded by both
+ * the editor canvas and the production page.
+ */

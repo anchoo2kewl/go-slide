@@ -1,0 +1,114 @@
+/* Default theme — clean white deck for general-purpose talks.
+ *
+ * Uses Reveal.js's white theme as the chrome and adds the same design
+ * primitives as the AAL theme so authors can move between themes
+ * without rewriting structure. Accent color shifts from teal to a
+ * neutral indigo and backgrounds invert from navy to white.
+ */
+
+.reveal .slides section.slide,
+.reveal .slides section.slide-dark {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+.reveal .slides section.slide { background: var(--slide-bg, #ffffff); }
+.reveal .slides section.slide-dark { background: #0f172a; }
+
+.reveal .slides section.slide h1,
+.reveal .slides section.slide h2,
+.reveal .slides section.slide h3 {
+  color: var(--slide-text, #0f172a);
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-transform: none;
+}
+.reveal .slides section.slide-dark h1,
+.reveal .slides section.slide-dark h2,
+.reveal .slides section.slide-dark h3 {
+  color: #f8fafc;
+  margin: 0;
+  text-transform: none;
+}
+.reveal .slides section.slide p,
+.reveal .slides section.slide li { color: var(--slide-text-soft, #475569); }
+.reveal .slides section.slide-dark p,
+.reveal .slides section.slide-dark li { color: #cbd5e1; }
+.reveal .slides section.slide a,
+.reveal .slides section.slide-dark a { color: var(--slide-accent, #2563eb); }
+
+/* Layout primitives — same names as AAL so structure is portable */
+.slide-wrap {
+  padding: 5% 6%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.slide-wrap-top { justify-content: flex-start; }
+
+.slide-bar {
+  position: absolute; left: 0; top: 0;
+  width: 6px; height: 100%;
+  background: var(--slide-accent, #2563eb);
+}
+
+.slide-eyebrow {
+  color: var(--slide-accent, #2563eb);
+  font-size: 13px; letter-spacing: 3px;
+  font-weight: 700; text-transform: uppercase;
+}
+.slide-rule {
+  width: 64px; height: 3px;
+  background: var(--slide-rule, #2563eb);
+  border: 0; margin: 1rem 0 1.4rem 0;
+}
+
+.slide-h1 { font-size: 4.4rem; font-weight: 800; line-height: 1.05; }
+.slide-h2 { font-size: 2.4rem; font-weight: 700; line-height: 1.15; }
+.slide-lede { font-size: 1.4rem; font-weight: 300; max-width: 90%; line-height: 1.4; }
+
+.slide-pill {
+  display: inline-block;
+  border: 1.5px solid var(--slide-accent, #2563eb);
+  color: var(--slide-accent, #2563eb);
+  border-radius: 999px;
+  padding: .35rem .9rem;
+  font-size: .8rem; font-weight: 600;
+  letter-spacing: 1px;
+  margin-right: .5rem;
+}
+
+.slide-card {
+  background: var(--slide-card-bg, #f8fafc);
+  border: 1px solid var(--slide-card-bd, #e2e8f0);
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+}
+
+.slide-stat { font-size: 2.6rem; font-weight: 800; color: var(--slide-accent, #2563eb); line-height: 1; }
+.slide-stat-label {
+  color: #64748b; font-size: .75rem;
+  letter-spacing: 1.4px; text-transform: uppercase;
+  margin-top: .5rem; line-height: 1.35;
+}
+
+.slide-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1.4rem; }
+.slide-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1.2rem; }
+.slide-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 1rem; }
+
+.slide-quote {
+  border-left: 3px solid var(--slide-accent, #2563eb);
+  padding-left: 1rem;
+  color: var(--slide-text, #0f172a);
+  font-size: 1.15rem; line-height: 1.5; font-style: italic;
+}
+
+.slide-foot {
+  position: absolute; bottom: 20px; left: 6%; right: 6%;
+  display: flex; justify-content: space-between;
+  color: #94a3b8; font-size: .65rem;
+  letter-spacing: 1.5px; font-weight: 600;
+}
+
+.slide-mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
