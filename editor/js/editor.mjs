@@ -216,11 +216,18 @@ export class GoSlideEditor {
   _renderThumbs() {
     this.dom.thumbs.innerHTML = this.state.slides.map((s, i) => `
       <li class="gs-thumb ${i === this.state.currentIndex ? 'active' : ''}" data-i="${i}">
+        <div class="gs-thumb-frame">
+          <div class="gs-thumb-stage">${sectionHTML(s)}</div>
+        </div>
         <span class="gs-thumb-num">${i + 1}</span>
-        <div class="gs-thumb-preview">${escapeHTML(stripTags(s.content)).slice(0, 80)}</div>
         <button class="gs-thumb-del" title="Delete slide">×</button>
       </li>
     `).join('');
+    this._scaleThumbs();
+    if (!this._thumbResizeObserver) {
+      this._thumbResizeObserver = new ResizeObserver(() => this._scaleThumbs());
+      this._thumbResizeObserver.observe(this.dom.thumbs);
+    }
     this.dom.thumbs.querySelectorAll('.gs-thumb').forEach((el) => {
       el.addEventListener('click', (e) => {
         if (e.target.classList.contains('gs-thumb-del')) {
@@ -230,6 +237,34 @@ export class GoSlideEditor {
         this._switchSlide(parseInt(el.dataset.i, 10));
       });
     });
+  }
+
+  // _scaleThumbs sets the per-thumbnail CSS scale variable so the
+  // 1280×800 stage shrinks to whatever width the sidebar exposes.
+  _scaleThumbs() {
+    this.dom.thumbs.querySelectorAll('.gs-thumb-frame').forEach((frame) => {
+      const w = frame.clientWidth;
+      if (w > 0) frame.style.setProperty('--gs-thumb-scale', String(w / 1280));
+    });
+  }
+
+  // _refreshActiveThumb syncs the live TipTap content into the active
+  // slide's thumbnail, debounced so we don't reflow the sidebar on
+  // every keystroke. Called from TipTap onUpdate.
+  _refreshActiveThumb() {
+    if (this._thumbRefreshTimer) clearTimeout(this._thumbRefreshTimer);
+    this._thumbRefreshTimer = setTimeout(() => {
+      const idx = this.state.currentIndex;
+      const cur = this.state.slides[idx];
+      if (!cur) return;
+      if (this.state.mode === 'wysiwyg' && this.tiptap) {
+        cur.content = this.tiptap.getHTML();
+      } else if (this.state.mode === 'code' && this.dom.code) {
+        cur.content = this.dom.code.value;
+      }
+      const stage = this.dom.thumbs.querySelector(`.gs-thumb[data-i="${idx}"] .gs-thumb-stage`);
+      if (stage) stage.innerHTML = sectionHTML(cur);
+    }, 250);
   }
 
   _switchSlide(i) {
@@ -304,6 +339,7 @@ export class GoSlideEditor {
       onUpdate: () => {
         this.state.dirty = true;
         if (this.opts.onChange) this.opts.onChange(this.state);
+        this._refreshActiveThumb();
       },
     });
   }
@@ -316,6 +352,7 @@ export class GoSlideEditor {
       cur.content = this.dom.code.value;
       this.state.dirty = true;
       if (this.opts.onChange) this.opts.onChange(this.state);
+      this._refreshActiveThumb();
     };
   }
 
@@ -439,6 +476,15 @@ function escapeHTML(s) {
 }
 function escapeAttr(s) {
   return String(s).replace(/"/g, '&quot;');
+}
+
+// sectionHTML serializes a slide back to its <section> form wrapped in
+// .reveal/.slides so the theme CSS cascade matches production rendering.
+function sectionHTML(s) {
+  const attrStr = Object.entries(s.attrs || {})
+    .filter(([, v]) => v != null && v !== '')
+    .map(([k, v]) => `${k}="${escapeAttr(v)}"`).join(' ');
+  return `<div class="reveal"><div class="slides"><section ${attrStr}>${s.content || ''}</section></div></div>`;
 }
 
 // Globals for non-module callers (most blogs don't use ESM in admin pages).
