@@ -115,37 +115,43 @@ export class GoSlideEditor {
   _buildShell() {
     const root = document.querySelector(this.opts.mountSelector);
     if (!root) throw new Error(`go-slide: mount node not found: ${this.opts.mountSelector}`);
+    // type="button" on every <button> is load-bearing — the editor is
+    // typically embedded inside the host's <form>, where unspecified
+    // buttons default to type="submit" and submitting before content is
+    // captured produces validation errors like "Title and content are
+    // required". The Save handler does its own form.submit() once the
+    // content field is populated.
     root.innerHTML = `
       <div class="gs-editor">
         <aside class="gs-sidebar">
           <div class="gs-sidebar-head">SLIDES</div>
           <ol class="gs-thumbs" id="gs-thumbs"></ol>
-          <button class="gs-add-slide" id="gs-add-slide">+ Add Slide</button>
+          <button type="button" class="gs-add-slide" id="gs-add-slide">+ Add Slide</button>
         </aside>
         <main class="gs-main">
           <div class="gs-toolbar" id="gs-toolbar">
             <div class="gs-mode-toggle">
-              <button class="gs-mode-btn active" data-mode="wysiwyg" id="mode-wysiwyg">WYSIWYG</button>
-              <button class="gs-mode-btn" data-mode="code" id="mode-code">Code</button>
-              <button class="gs-mode-btn" data-mode="preview" id="mode-preview">Preview</button>
+              <button type="button" class="gs-mode-btn active" data-mode="wysiwyg" id="mode-wysiwyg">WYSIWYG</button>
+              <button type="button" class="gs-mode-btn" data-mode="code" id="mode-code">Code</button>
+              <button type="button" class="gs-mode-btn" data-mode="preview" id="mode-preview">Preview</button>
             </div>
             <div class="gs-toolbar-spacer"></div>
             <div class="gs-toolbar-group" id="gs-block-toolbar">
-              <button class="gs-tb-btn" data-cmd="aalH1" title="Hero heading">H1</button>
-              <button class="gs-tb-btn" data-cmd="aalH2" title="Section heading">H2</button>
-              <button class="gs-tb-btn" data-cmd="aalEyebrow" title="Eyebrow label">Eyebrow</button>
-              <button class="gs-tb-btn" data-cmd="aalRule" title="Accent rule">Rule</button>
-              <button class="gs-tb-btn" data-cmd="aalLede" title="Lede paragraph">Lede</button>
-              <button class="gs-tb-btn" data-cmd="aalQuote" title="Pull quote">Quote</button>
-              <button class="gs-tb-btn" data-cmd="aalGrid3" title="3-column grid of cards">Grid 3</button>
-              <button class="gs-tb-btn" data-cmd="aalGrid2" title="2-column grid">Grid 2</button>
-              <button class="gs-tb-btn" data-cmd="aalCard" title="Single card">Card</button>
-              <button class="gs-tb-btn" data-cmd="aalStat" title="Big number stat">Stat</button>
-              <button class="gs-tb-btn" data-cmd="aalPill" title="Pill chip">Pill</button>
-              <button class="gs-tb-btn" data-cmd="aalFoot" title="Footer row">Foot</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalH1" title="Hero heading">H1</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalH2" title="Section heading">H2</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalEyebrow" title="Eyebrow label">Eyebrow</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalRule" title="Accent rule">Rule</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalLede" title="Lede paragraph">Lede</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalQuote" title="Pull quote">Quote</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalGrid3" title="3-column grid of cards">Grid 3</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalGrid2" title="2-column grid">Grid 2</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalCard" title="Single card">Card</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalStat" title="Big number stat">Stat</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalPill" title="Pill chip">Pill</button>
+              <button type="button" class="gs-tb-btn" data-cmd="aalFoot" title="Footer row">Foot</button>
             </div>
             <div class="gs-toolbar-spacer"></div>
-            <button class="gs-tb-btn gs-save" id="gs-save">Save</button>
+            <button type="button" class="gs-tb-btn gs-save" id="gs-save">Save</button>
           </div>
           <div class="gs-canvas-wrap" id="gs-canvas-wrap">
             <div class="gs-canvas-fit" id="gs-canvas-fit">
@@ -220,7 +226,7 @@ export class GoSlideEditor {
           <div class="gs-thumb-stage">${sectionHTML(s)}</div>
         </div>
         <span class="gs-thumb-num">${i + 1}</span>
-        <button class="gs-thumb-del" title="Delete slide">×</button>
+        <button type="button" class="gs-thumb-del" title="Delete slide">×</button>
       </li>
     `).join('');
     this._scaleThumbs();
